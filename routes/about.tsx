@@ -45,6 +45,7 @@ export default function AboutPage({ data }: PageProps<Project[] | null>) {
 
     return (
         <html>
+            <title>ix0rai | about</title>
             <div class="p-4 mx-auto max-w-screen-md" style="text-align:center">
                 <h1>info on me, ix0rai!</h1>
                 <br></br>
