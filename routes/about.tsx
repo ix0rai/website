@@ -1,25 +1,73 @@
 import { tw } from "twind";
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Project } from "./api/projects.tsx";
+import { Link } from "./api/links.tsx";
 import { handler as projectHandler } from "./api/projects.tsx";
+import { handler as linkHandler } from "./api/links.tsx";
+import { handler as wipHandler } from "./api/wips.tsx";
 
-export const handler: Handlers<Project[] | null> = {
+
+class PageData {
+    projects: Project[];
+    links: Link[];
+    wips: Project[];
+
+    constructor(projects: Project[], links: Link[], wips: Project[]) {
+        this.projects = projects;
+        this.links = links;
+        this.wips = wips;
+      }
+}
+
+export const handler: Handlers<PageData | null> = {
     async GET(req, ctx) {
-      const response = await projectHandler(req);
-      const projects: Project[] = await response.json();
-      return ctx.render(projects);
+      const projectResponse = await projectHandler(req);
+      const projects: Project[] = await projectResponse.json();
+
+      const linkResponse = await linkHandler(req);
+      const links: Link[] = await linkResponse.json();
+
+      const wipResponse = await wipHandler(req);
+      const wips: Project[] = await wipResponse.json();
+
+      return ctx.render(new PageData(projects, links, wips));
     },
 };
 
-export default function AboutPage({ data }: PageProps<Project[] | null>) {
+export default function AboutPage({ data }: PageProps<PageData | null>) {
     if (!data) {
         return <h1>could not get data!</h1>;
     }
 
-    const projectList = data.map((project) => {
-        return (
+    const projectList = data.projects.map((project) => {
+        return(
             <li key={project.name} class={
-                tw({ 'bg-yellow-200': true, rounded: true, 'list-none': true })
+                tw({'list-none': true, })
+            }>
+                <a href={project.links.main} class={tw({underline: true,})}>{project.name} - {project.type}</a>
+                <p>{project.description}</p>
+                <p>links:</p>
+                <ul>
+                    {Object.entries(project.links).map(([name, link]) => {
+                        if (name !== "main") {
+                            return (
+                                <li key={name}>
+                                    <a href={link} class={tw({underline: true})}>{name}</a>
+                                </li>
+                            );
+                        } else {
+                            return null;
+                        }
+                    })}
+                </ul>
+            </li>
+        );
+    });
+
+    const wipList = data.wips.map((project) => {
+        return(
+            <li key={project.name} class={
+                tw({'list-none': true })
             }>
                 <a href={project.links.main} class={tw({underline: true})}>{project.name} - {project.type}</a>
                 <p>{project.description}</p>
@@ -37,11 +85,19 @@ export default function AboutPage({ data }: PageProps<Project[] | null>) {
                         }
                     })}
                 </ul>
-                <br></br>
             </li>
         );
     });
-        
+    
+    const linkList = data.links.map((link) => {
+        return (
+            <li key={link.name} class={
+                    tw({underline: true, 'list-none': true,})
+                }>
+                <a href={link.link}>{link.name}</a>
+            </li>
+        );
+    });
 
     return (
         <html>
@@ -70,34 +126,17 @@ export default function AboutPage({ data }: PageProps<Project[] | null>) {
                 <br></br>
 
                 <p>my links:</p>
-                <ul class={
-                    tw({ 'bg-pink-200': true, rounded: true, underline: true,})
-                }>
-                    <li><a href="https://www.curseforge.com/members/ix0rai">curseforge</a></li>
-                    <li><a href="https://github.com/ix0rai">github</a></li>
-                    <li><a href="https://steamcommunity.com/id/ix0rai/">steam</a></li>
-                    <li><a href="https://www.twitch.tv/ix0rai/">twitch</a></li>
-                    <li><a href="https://youtube.com/@ix0rai">youtube</a></li>
-                    <li><a href="mailto:ix0rai64@gmail.com">email</a></li>
-                    <li><a href="https://en.pronouns.page/@ix0rai">pronouns.page</a></li>
-                    <li><a href="https://modrinth.com/user/ix0rai/">modrinth</a></li>
-                    <li><a href="https://twitter.com/ix0rai">twitter</a></li>
-                    <li><a href="https://www.tumblr.com/ix0rai">tumblr</a></li>
-                </ul>
+                <div class={tw({'bg-pink-200': true, rounded: true,})}>{linkList}</div>
 
                 <br></br>
 
                 <p>my projects:</p>
-                {projectList}
+                <div class={tw({'bg-yellow-200': true, rounded: true,})}>{projectList}</div>
 
                 <br></br>
 
                 <p>my works in progress:</p>
-                <ul class={
-                    tw({ 'bg-red-200': true, rounded: true, underline: true,})
-                }>
-                    <li><a href="https://github.com/ix0rai/tantalising_teas">tantalising teas - minecraft mod</a></li>                
-                </ul>
+                <div class={tw({'bg-red-200': true, rounded: true,})}>{wipList}</div>
             </div>
         </html>
     );

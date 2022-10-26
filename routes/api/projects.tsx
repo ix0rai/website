@@ -1,5 +1,3 @@
-import { HandlerContext } from "$fresh/server.ts";
-
 export interface Project {
     name: string;
     type: string;
