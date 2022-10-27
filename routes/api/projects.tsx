@@ -40,8 +40,6 @@ const json = [
     }
 ]
 
-// todo caching
-
 async function updateDownloads(project: Project, index: number) {
     interface GithubRelease {
         assets: [
