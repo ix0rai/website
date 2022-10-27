@@ -46,6 +46,7 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
             }>
                 <a href={project.links.main} class={tw({underline: true,})}>{project.name} - {project.type}</a>
                 <p>{project.description}</p>
+                <p>downloads: {project.downloads == null || undefined? "not yet calculated" : project.downloads}</p>
                 <p>links:</p>
                 <ul>
                     {Object.entries(project.links).map(([name, link]) => {
