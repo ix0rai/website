@@ -57,24 +57,13 @@ async function updateDownloads(project: Project, index: number) {
     let downloadCount = 0;
 
     // get from modrinth api
+    // modrinth api doesn't support etags so we always call
     if (project.links.modrinth != undefined) {
         const modrinthName = project.links.modrinth.split("mod/").pop() as string;
-        const response = await fetch(`https://api.modrinth.com/v2/project/${modrinthName}`,
-            {
-                headers: {
-                    "If-None-Match": modrinthEtags[index]
-                }
-            }
-        );
+        const response = await fetch(`https://api.modrinth.com/v2/project/${modrinthName}`);
 
-        // 200 response means data has changed
-        // 304 response means data has not changed
-        if (response.status === 200 || modrinthEtags[index] == undefined) {
-            modrinthEtags[index] = response.headers.get("ETag") as string;
-            const project: ModrinthProject = await response.json();
-            
-            downloadCount += project.downloads;
-        }
+        const modrinthProject: ModrinthProject = await response.json();
+        downloadCount += modrinthProject.downloads - (firstRun ? 0 : cachedModrinthDownloads[index]);
     }
 
 
@@ -91,39 +80,60 @@ async function updateDownloads(project: Project, index: number) {
 
     // 200 response means data has changed
     // 304 response means data has not changed
-    if (response.status === 200 || githubEtags[index] == undefined) {
+    if (response.status === 200 || githubEtags[index] == "") {
         githubEtags[index] = response.headers.get("ETag") as string;
-            
         const releases: GithubRelease[] = await response.json();
+
+        let githubDownloads = 0;
 
         if (releases.length > 0) {
             for (const release of releases) {
                 for (const asset of release.assets) {
-                    downloadCount += asset.download_count;
+                    githubDownloads += asset.download_count;
                 }
             }
         }
 
-        downloads[index] = downloadCount
+        downloadCount += githubDownloads - (firstRun ? 0 : cachedGithubDownloads[index]);
+        cachedGithubDownloads[index] = githubDownloads;
+    } else {
+        downloadCount += cachedGithubDownloads[index];
     }
+
+    downloads[index] = downloadCount;
+    firstRun = false;
 }
 
 // etags tell us if the data has changed since the last request
 const githubEtags: string[] = [];
-const modrinthEtags: string[] = [];
+
+// cached downloads
 const downloads: number[] = [];
+const cachedGithubDownloads: number[] = [];
+const cachedModrinthDownloads: number[] = [];
 
-export const handler = (_req: Request): Response => {
+// whether it's the first run
+let firstRun = true;
+
+// initialise arrays
+json.map((project, index) => {
+    project.downloads = 0;
+    downloads[index] = 0;
+    cachedGithubDownloads[index] = 0;
+    cachedModrinthDownloads[index] = 0;
+});
+
+
+export const handler = async (_req: Request): Promise<Response> => {
     // generate latest download numbers
-    json.map((project, index) => {
-        updateDownloads(project, index);
-    });
-
-    json.map((project, index) => {
+    const requests = json.map(async (project, index) => {
+        await updateDownloads(project, index);
         project.downloads = downloads[index];
     });
 
-    return new Response(JSON.stringify(json), {
-      headers: { "Content-Type": "application/json" },
+    return await Promise.allSettled(requests).then(() => {
+        return new Response(JSON.stringify(json), {
+            headers: { "Content-Type": "application/json" },
+        });
     });
 };
