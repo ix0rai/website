@@ -44,9 +44,9 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
             <li key={project.name} class={
                 tw({'list-none': true, })
             }>
-                <a href={project.links.main} class={tw({underline: true,})}>{project.name} - {project.type}</a>
+                <a href={`/project/${project.id}`} class={tw({underline: true,})}>{project.name} - {project.type}</a>
                 <p>{project.description}</p>
-                <p>downloads: {project.downloads == null || undefined? "not yet calculated" : project.downloads}</p>
+                <p>downloads: {project.downloads}</p>
                 <p>links:</p>
                 <ul>
                     {Object.entries(project.links).map(([name, link]) => {
@@ -110,7 +110,7 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
                 <br></br>
                 <p>my pronouns:</p>
                 <div class={
-                    tw({ 'bg-purple-200': true, rounded: true,})
+                    tw({ 'bg-purple-200': true, rounded: true, 'p-2.5': true})
                 }>
                     <h2>she/her</h2>
                 </div>
@@ -119,7 +119,7 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
 
                 <p>I'm currently learning:</p>
                 <ul class={
-                    tw({ 'bg-blue-200': true, rounded: true,})
+                    tw({ 'bg-blue-200': true, rounded: true, 'p-2.5': true,})
                 }>
                     <li>the rust programming language</li>
                     <li>web development with fresh</li>
@@ -129,17 +129,17 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
                 <br></br>
 
                 <p>my links:</p>
-                <div class={tw({'bg-pink-200': true, rounded: true,})}>{linkList}</div>
+                <div class={tw({'bg-pink-200': true, rounded: true, 'p-2.5': true})}>{linkList}</div>
 
                 <br></br>
 
                 <p>my projects:</p>
-                <div class={tw({'bg-yellow-200': true, rounded: true,})}>{projectList}</div>
+                <div class={tw({'bg-yellow-200': true, rounded: true, 'p-2.5': true})}>{projectList}</div>
 
                 <br></br>
 
                 <p>my works in progress:</p>
-                <div class={tw({'bg-red-200': true, rounded: true,})}>{wipList}</div>
+                <div class={tw({'bg-red-200': true, rounded: true, 'p-2.5': true})}>{wipList}</div>
             </div>
         </html>
     );

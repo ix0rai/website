@@ -1,5 +1,6 @@
 export interface Project {
     name: string;
+    id: string;
     type: string;
     description: string;
     downloads: number;
@@ -13,9 +14,10 @@ export interface LinkCollection {
     modrinth?: string;
 }
 
-const json = [
+export const json = [
     {
         name: "rainglow",
+        id: "rainglow",
         type: "minecraft mod",
         description: "make your glow squids gorgeous!",
         downloads: 0,
@@ -28,6 +30,7 @@ const json = [
     },
     {
         name: "bodacious berries",
+        id: "bodacious_berries",
         type: "minecraft mod",
         description: "berries for all!",
         downloads: 0,
@@ -122,7 +125,6 @@ json.map((project, index) => {
     cachedGithubDownloads[index] = 0;
     cachedModrinthDownloads[index] = 0;
 });
-
 
 export const handler = async (_req: Request): Promise<Response> => {
     // generate latest download numbers
