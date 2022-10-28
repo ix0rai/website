@@ -49,25 +49,53 @@ async function updateDownloads(project: Project, index: number) {
         ]
     }
 
+    interface ModrinthProject {
+        downloads: number;
+    }
+
+    // initialize the download count at 0
+    let downloadCount = 0;
+
+    // get from modrinth api
+    if (project.links.modrinth != undefined) {
+        const modrinthName = project.links.modrinth.split("mod/").pop() as string;
+        const response = await fetch(`https://api.modrinth.com/v2/project/${modrinthName}`,
+            {
+                headers: {
+                    "If-None-Match": modrinthEtags[index]
+                }
+            }
+        );
+
+        // 200 response means data has changed
+        // 304 response means data has not changed
+        if (response.status === 200 || modrinthEtags[index] == undefined) {
+            modrinthEtags[index] = response.headers.get("ETag") as string;
+            const project: ModrinthProject = await response.json();
+            
+            downloadCount += project.downloads;
+        }
+    }
+
+
     // get from github api
-    const repoName: string = project.links.github.split("com/").pop() as string;
+    const repoName = project.links.github.split("com/").pop() as string;
     // only get data if it has changed
     const response = await fetch(`https://api.github.com/repos/${repoName}/releases`,
         {
             headers: {
-                "If-None-Match": etags[index]
+                "If-None-Match": githubEtags[index]
             }
         }
     );
 
     // 200 response means data has changed
     // 304 response means data has not changed
-    if (response.status === 200 || etags[index] == undefined) {
-        etags[index] = response.headers.get("ETag") as string;
+    if (response.status === 200 || githubEtags[index] == undefined) {
+        githubEtags[index] = response.headers.get("ETag") as string;
             
         const releases: GithubRelease[] = await response.json();
 
-        let downloadCount = 0;
         if (releases.length > 0) {
             for (const release of releases) {
                 for (const asset of release.assets) {
@@ -77,12 +105,12 @@ async function updateDownloads(project: Project, index: number) {
         }
 
         downloads[index] = downloadCount
-        return downloadCount;
     }
 }
 
 // etags tell us if the data has changed since the last request
-const etags: string[] = [];
+const githubEtags: string[] = [];
+const modrinthEtags: string[] = [];
 const downloads: number[] = [];
 
 export const handler = (_req: Request): Response => {
