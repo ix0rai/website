@@ -39,7 +39,7 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
         return <h1>could not get data!</h1>;
     }
 
-    const projectList = data.projects.map((project) => {
+    const projectList = data.projects.map((project, index) => {
         return(
             <li key={project.name} class={
                 tw({'list-none': true, })
@@ -61,11 +61,12 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
                         }
                     })}
                 </ul>
+                {index === data.projects.length - 1 ? null : <br></br>}
             </li>
         );
     });
 
-    const wipList = data.wips.map((project) => {
+    const wipList = data.wips.map((project, index) => {
         return(
             <li key={project.name} class={
                 tw({'list-none': true })
@@ -86,6 +87,7 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
                         }
                     })}
                 </ul>
+                {index === data.wips.length - 1 ? null : <br></br>}
             </li>
         );
     });
