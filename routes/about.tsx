@@ -1,19 +1,17 @@
 import { tw } from "twind";
 import { Handlers, PageProps } from "$fresh/server.ts";
-import { Project } from "./api/projects.tsx";
-import { Link } from "./api/links.tsx";
-import { handler as projectHandler } from "./api/projects.tsx";
-import { handler as linkHandler } from "./api/links.tsx";
+import Projects from "../islands/Projects.tsx"
+import { handler as projectHandler, Project } from "./api/projects.tsx";
+import { handler as linkHandler, Link } from "./api/links.tsx";
 import { handler as wipHandler } from "./api/wips.tsx";
 
-
 class PageData {
-    projects: Project[];
+    projectRequest: Promise<Response>;
     links: Link[];
     wips: Project[];
 
-    constructor(projects: Project[], links: Link[], wips: Project[]) {
-        this.projects = projects;
+    constructor(projectRequest: Promise<Response>, links: Link[], wips: Project[]) {
+        this.projectRequest = projectRequest;
         this.links = links;
         this.wips = wips;
       }
@@ -21,16 +19,15 @@ class PageData {
 
 export const handler: Handlers<PageData | null> = {
     async GET(req, ctx) {
-      const projectResponse = await projectHandler(req);
-      const projects: Project[] = await projectResponse.json();
+      const projectRequest = projectHandler();
 
       const linkResponse = await linkHandler(req);
-      const links: Link[] = await linkResponse.json();
+      const links = await linkResponse.json();
 
       const wipResponse = await wipHandler(req);
-      const wips: Project[] = await wipResponse.json();
+      const wips = await wipResponse.json()
 
-      return ctx.render(new PageData(projects, links, wips));
+      return ctx.render(new PageData(projectRequest, links, wips));
     },
 };
 
@@ -39,32 +36,9 @@ export default function AboutPage({ data }: PageProps<PageData | null>) {
         return <h1>could not get data!</h1>;
     }
 
-    const projectList = data.projects.map((project, index) => {
-        return(
-            <li key={project.name} class={
-                tw({'list-none': true, })
-            }>
-                <a href={`/project/${project.id}`} class={tw({underline: true,})}>{project.name} - {project.type}</a>
-                <p>{project.description}</p>
-                <p>downloads: {project.downloads}</p>
-                <p>links:</p>
-                <ul>
-                    {Object.entries(project.links).map(([name, link]) => {
-                        if (name !== "main") {
-                            return (
-                                <li key={name}>
-                                    <a href={link} class={tw({underline: true})}>{name}</a>
-                                </li>
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </ul>
-                {index === data.projects.length - 1 ? null : <br></br>}
-            </li>
-        );
-    });
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+    const projectList = <Projects/>;
 
     const wipList = data.wips.map((project, index) => {
         return(

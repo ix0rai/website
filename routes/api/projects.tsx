@@ -126,7 +126,7 @@ json.map((project, index) => {
     cachedModrinthDownloads[index] = 0;
 });
 
-export const handler = async (_req: Request): Promise<Response> => {
+export const handler = async (): Promise<Response> => {
     // generate latest download numbers
     const requests = json.map(async (project, index) => {
         await updateDownloads(project, index);
