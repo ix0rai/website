@@ -1,4 +1,3 @@
-import { tw } from "twind";
 import { useEffect, useState } from "preact/hooks";
 import { handler as projectHandler, Project } from "../routes/api/projects.tsx";
 
@@ -10,10 +9,8 @@ export default function Projects() {
       const json: Project[] = await response.json();
       const projectsFormatted = <span>{json.map((project, index) => {
         return(
-            <li key={project.name} class={
-                tw({'list-none': true, })
-            }>
-                <a href={`/project/${project.id}`} class={tw({underline: true,})}>{project.name} - {project.type}</a>
+            <li key={project.name} class={"list-none"}>
+                <a href={`/project/${project.id}`} class={"underline"}>{project.name} - {project.type}</a>
                 <p>{project.description}</p>
                 <p>downloads: {project.downloads}</p>
                 <p>links:</p>
@@ -22,7 +19,7 @@ export default function Projects() {
                         if (name !== "main") {
                             return (
                                 <li key={name}>
-                                    <a href={link} class={tw({underline: true})}>{name}</a>
+                                    <a href={link} class={"underline"}>{name}</a>
                                 </li>
                             );
                         } else {
