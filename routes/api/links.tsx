@@ -46,7 +46,7 @@ const json = [
     }
 ]
 
-export const handler = (_req: Request): Response => {
+export const handler = (): Response => {
     return new Response(JSON.stringify(json), {
       headers: { "Content-Type": "application/json" },
     });

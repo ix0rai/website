@@ -1,75 +1,15 @@
-import { Handlers, PageProps } from "$fresh/server.ts";
 import Projects from "../islands/Projects.tsx"
-import { handler as projectHandler, Project } from "./api/projects.tsx";
-import { handler as linkHandler, Link } from "./api/links.tsx";
-import { handler as wipHandler } from "./api/wips.tsx";
+import Wips from "../islands/Wips.tsx"
+import Links from "../islands/Links.tsx";
 
-class PageData {
-    projectRequest: Promise<Response>;
-    links: Link[];
-    wips: Project[];
-
-    constructor(projectRequest: Promise<Response>, links: Link[], wips: Project[]) {
-        this.projectRequest = projectRequest;
-        this.links = links;
-        this.wips = wips;
-      }
-}
-
-export const handler: Handlers<PageData | null> = {
-    async GET(req, ctx) {
-      const projectRequest = projectHandler();
-
-      const linkResponse = await linkHandler(req);
-      const links = await linkResponse.json();
-
-      const wipResponse = await wipHandler(req);
-      const wips = await wipResponse.json()
-
-      return ctx.render(new PageData(projectRequest, links, wips));
-    },
-};
-
-export default function AboutPage({ data }: PageProps<PageData | null>) {
-    if (!data) {
-        return <h1>could not get data!</h1>;
-    }
-
+export default function AboutPage() {
     const date = new Date();
     date.setHours(date.getHours() + 1);
-    const projectList = <Projects/>;
+    const projectList = <Projects filter=""/>;
 
-    const wipList = data.wips.map((project, index) => {
-        return(
-            <li key={project.name} class={"list-none"}>
-                <a href={project.links.main} class={"underline"}>{project.name} - {project.type}</a>
-                <p>{project.description}</p>
-                <p>links:</p>
-                <ul>
-                    {Object.entries(project.links).map(([name, link]) => {
-                        if (name !== "main") {
-                            return (
-                                <li key={name}>
-                                    <a href={link} class={"underline"}>{name}</a>
-                                </li>
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </ul>
-                {index === data.wips.length - 1 ? null : <br></br>}
-            </li>
-        );
-    });
+    const wipList = <Wips filter=""/>;
     
-    const linkList = data.links.map((link) => {
-        return (
-            <li key={link.name} class={"underline list-none"}>
-                <a href={link.link}>{link.name}</a>
-            </li>
-        );
-    });
+    const linkList = <Links filter=""/>;
 
     return (
         <html>

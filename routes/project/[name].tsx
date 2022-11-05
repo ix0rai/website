@@ -1,4 +1,5 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
+import Projects from "../../islands/Projects.tsx";
 import { Project, json, handler as projectHandler } from "../api/projects.tsx";
 
 export const handler: Handlers<Project> = {
@@ -25,27 +26,9 @@ export default function ProjectPage({ data }: PageProps<Project | undefined>) {
       <title>ix0rai | {project.name}</title>
       <body>
         <h1 class={"p-2.5"}>project | {project.name}</h1>
-        <h1 class={"bg-purple-200 rounded p-2.5"}>
-            <li key={project.name} class={"list-none"}>
-                <a href={`/project/${project.id}`} class={"underline"}>{project.name} - {project.type}</a>
-                <p>{project.description}</p>
-                <p>downloads: {project.downloads}</p>
-                <p>links:</p>
-                <ul>
-                    {Object.entries(project.links).map(([name, link]) => {
-                        if (name !== "main") {
-                            return (
-                                <li key={name}>
-                                    <a href={link} class={"underline"}>{name}</a>
-                                </li>
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                </ul>
-            </li>
-        </h1>
+        <div class={"bg-yellow-200 rounded p-2.5"}>
+          <Projects filter={`${project.id}`}/>
+        </div>
       </body>
     </html>;
   } else {
