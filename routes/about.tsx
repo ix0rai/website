@@ -12,8 +12,7 @@ export default function AboutPage() {
     const linkList = <Links filter=""/>;
 
     return (
-        <html>
-            <meta name="about ix0rai"></meta>
+        <meta name="description" content="about ix0rai">
             <title>ix0rai | about</title>
             <div class="p-4 mx-auto max-w-screen-md" style="text-align:center">
                 <h1>info on me, ix0rai!</h1>
@@ -53,7 +52,7 @@ export default function AboutPage() {
                     {wipList}
                 </div>
             </div>
-        </html>
+        </meta>
     );
   }
   
