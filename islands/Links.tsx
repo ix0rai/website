@@ -8,7 +8,7 @@ export default function Links(props: { filter: string }) {
   useEffect(() => {
     const data = linkHandler();
     data.json().then((json: Link[]) => {
-        const formattedLinks = <span>{json.map((link, index) => {
+        const formattedLinks = <ul>{json.map((link, index) => {
             if (link.name.includes(filter)) {
                 return(
                     <li key={link.name} class={"underline list-none"}>
@@ -18,11 +18,11 @@ export default function Links(props: { filter: string }) {
             } else {
             return <></>;
             }
-        })}</span>
+        })}</ul>
 
         setLinks(formattedLinks);
     });
   });
 
-  return <span>{links}</span>;
+  return links;
 }

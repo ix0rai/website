@@ -23,6 +23,7 @@ export default function ProjectPage({ data }: PageProps<Project | undefined>) {
     const project: Project = data;
 
     return <html class={"p-4 mx-auto max-w-screen-md"} style="text-align:center;">
+      <meta name={`project ${project.name} by ix0rai`}></meta>
       <title>ix0rai | {project.name}</title>
       <body>
         <h1 class={"p-2.5"}>project | {project.name}</h1>

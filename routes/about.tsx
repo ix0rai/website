@@ -13,6 +13,7 @@ export default function AboutPage() {
 
     return (
         <html>
+            <meta name="about ix0rai"></meta>
             <title>ix0rai | about</title>
             <div class="p-4 mx-auto max-w-screen-md" style="text-align:center">
                 <h1>info on me, ix0rai!</h1>

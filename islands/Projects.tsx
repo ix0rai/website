@@ -8,7 +8,7 @@ export default function Projects(props: { filter: string }) {
   useEffect(() => {
     projectHandler().then(async (response: Response) => {
       const json: Project[] = await response.json();
-      const projectsFormatted = <span>{json.map((project, index) => {
+      const projectsFormatted = <ul>{json.map((project, index) => {
         if (project.id.includes(filter)) {
           return(
               <li key={project.name} class={"list-none"}>
@@ -35,11 +35,11 @@ export default function Projects(props: { filter: string }) {
         } else {
           return <></>;
         }
-      })}</span>;
+      })}</ul>;
 
       setProjects(projectsFormatted);
     });
   });
 
-  return <span>{projects}</span>;
+  return projects;
 }

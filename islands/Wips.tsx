@@ -9,7 +9,7 @@ export default function Links(props: { filter: string }) {
   useEffect(() => {
     const data = wipHandler();
     data.json().then((json: Project[]) => {
-        const formattedWipList = <span>{json.map((project, index) => {
+        const formattedWipList = <ul>{json.map((project, index) => {
             if (project.id.includes(filter)) {
                 return(
                     <li key={project.name} class={"list-none"}>
@@ -35,11 +35,11 @@ export default function Links(props: { filter: string }) {
             } else {
                 return <></>;
             }
-        })}</span>;
+        })}</ul>;
 
         setWips(formattedWipList);
     });
   });
 
-  return <span>{wips}</span>;
+  return wips;
 }
