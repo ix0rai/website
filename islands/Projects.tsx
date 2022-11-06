@@ -41,5 +41,5 @@ export default function Projects(props: { filter: string }) {
     });
   });
 
-  return projects;
+  return <span>{projects}</span>;
 }

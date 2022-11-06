@@ -41,5 +41,5 @@ export default function Links(props: { filter: string }) {
     });
   });
 
-  return wips;
+  return <span>{wips}</span>;
 }

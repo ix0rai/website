@@ -24,5 +24,5 @@ export default function Links(props: { filter: string }) {
     });
   });
 
-  return links;
+  return <span>{links}</span>;
 }
