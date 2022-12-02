@@ -1,5 +1,6 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import Projects from "../../islands/Projects.tsx";
+import { Head } from "$fresh/runtime.ts";
 import { Project, json, handler as projectHandler } from "../api/projects.tsx";
 
 export const handler: Handlers<Project> = {
@@ -23,23 +24,33 @@ export default function ProjectPage({ data }: PageProps<Project | undefined>) {
     const project: Project = data;
 
     return(
-      <meta name="description" content={`${project.name} by ix0rai: ${project.description}`}>
-        <html class={"p-4 mx-auto max-w-screen-md"} style="text-align:center;">
-          <meta name={`project ${project.name} by ix0rai`}></meta>
+      <html>
+        <Head>
+          <meta name="description" content={`${project.name} by ix0rai: ${project.description}`} />
           <title>ix0rai | {project.name}</title>
-          <body>
-            <h1 class={"p-2.5"}>project | {project.name}</h1>
-            <div class={"bg-yellow-200 rounded p-2.5"}>
-              <Projects filter={`${project.id}`}/>
-            </div>
-          </body>
-        </html>
-      </meta>
+        </Head>
+        <body>
+          <html class={"p-4 mx-auto max-w-screen-md"} style="text-align:center;">
+            <meta name={`project ${project.name} by ix0rai`}></meta>
+            <body>
+              <h1 class={"p-2.5"}>project | {project.name}</h1>
+              <div class={"bg-yellow-200 rounded p-2.5"}>
+                <Projects filter={`${project.id}`}/>
+              </div>
+            </body>
+          </html>
+        </body>
+      </html>
     );
   } else {
     return(
-      <meta name="description" content="ix0rai project not found">
-        <html class={"p-4 mx-auto max-w-screen-md"} style="text-align:center">
+      <html>
+        <Head>
+          <meta name="description" content="ix0rai - project not found"/>
+          <title>ix0rai | project not found</title>
+        </Head>
+        <body>
+          <html class={"p-4 mx-auto max-w-screen-md"} style="text-align:center">
           <title>ix0rai | project not found</title>
           <body>
             <div class={"bg-purple-200 rounded p-2.5"} style="position:relative; text-align:center; top:16px;">
@@ -48,7 +59,8 @@ export default function ProjectPage({ data }: PageProps<Project | undefined>) {
             </div>
           </body>
         </html>
-      </meta>
+        </body>
+      </html>
     );
   }
 }

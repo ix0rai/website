@@ -1,6 +1,7 @@
 import Projects from "../islands/Projects.tsx"
 import Wips from "../islands/Wips.tsx"
 import Links from "../islands/Links.tsx";
+import { Head } from "$fresh/runtime.ts";
 
 export default function AboutPage() {
     const projectList = <Projects filter=""/>;
@@ -11,11 +12,12 @@ export default function AboutPage() {
 
     return (
         <html>
-            <head>
+            <Head>
                 <meta name="description" content="ix0rai - about me"/>
-            </head>
-            <body>
+                <meta name="robots" content="all"/>
                 <title>ix0rai | about</title>
+            </Head>
+            <body>
                 <div class="p-4 mx-auto max-w-screen-md" style="text-align:center">
                     <h1>info on me, ix0rai!</h1>
                     <br></br>
